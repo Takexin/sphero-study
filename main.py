@@ -1,13 +1,16 @@
-import time 
-from spherov2 import scanner
-from spherov2.sphero_edu import SpheroEduAPI 
-from spherov2.types import Color 
+import time
+from datetime import datetime
+import aiohttp
+import asyncio
+#options - get current time 
+#set timer
+#pomodoro mode
+while True:
+  print(datetime.now().strftime("%H:%M"))
+  time.sleep(0.2)
 
-toy = scanner.find_toy()
+async def handler(request):
+  pass
 
-with SpheroEduAPI(toy) as droid:
-    print("toy found")
-    droid.set_main_led(Color(0,0,255))
-    #test of the sphero bot
-    time.sleep(2)
+app = web.Application()
 
