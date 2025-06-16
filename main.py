@@ -25,7 +25,6 @@ async def onPomodoro(request : web.Request):
 
 @routes.post("/pomodoro")
 async def onPomodoroPost(request : web.Request):
-    request.app['currentStatus'] = 4
     request.app['startTime'] = datetime.now()
     body = await  request.post()
     print("BODY REPS")
@@ -34,6 +33,16 @@ async def onPomodoroPost(request : web.Request):
     request.app['pomodoroStudy'] = body.get('study')
     request.app['pomodoroRest'] = body.get('rest')
     request.app['pomodoroCycle'] = 1
+    currentTime = datetime.now()
+    studyVect = []
+    for i in range(0, int(body.get('reps'))):
+        currentTime += timedelta(minutes=float(body.get('study')))
+        studyVect.append(currentTime)
+        currentTime += timedelta(minutes=float(body.get('rest')))
+        studyVect.append(currentTime)
+    request.app['pomodoro'] = studyVect
+    request.app['currentStatus'] = 4
+
 
     return web.Response(text="okay")
 @routes.get("/clock")
@@ -47,12 +56,13 @@ async def clockMode(app : web.Application):
         if currentStatus == 3:
             print(datetime.now().strftime("%H:%M"))
         elif currentStatus == 4:
-            if app['pomodoroReps'] != app['pomodoroCycle']:
-                cycleTime = (app['startTime'] + timedelta(minutes=float(app['pomodoroStudy'])*int(app['pomodoroCycle']))) 
+            if len(app['pomodoro']) != app['pomodoroCycle']:
+                print(app['pomodoro'])
+                cycleTime = (app['startTime'] + timedelta(minutes=(app['pomodoro'][app['pomodoroCycle'] - 1]).minute)) 
                 remainingStudyTime = cycleTime - datetime.now()
                 print(remainingStudyTime.total_seconds()/60)
                 if remainingStudyTime.total_seconds() <= 0:
-                    pass
+                    app['pomodoroCycle'] += 1
                     #remainingRestTime = 
 
         await asyncio.sleep(0.2)
@@ -64,6 +74,7 @@ async def startServer(app : web.Application):
     app['pomodorostartTime'] = 0
     app['pomodoroCycle'] = 0
     app['currentStatus'] = 0
+    app['pomodoro'] = []
     app['server'] = asyncio.create_task(clockMode(app))
 
 
