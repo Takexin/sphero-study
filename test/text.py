@@ -9,13 +9,11 @@ def main():
     mac_address = "C7:7A:B3:81:35:0C"
     with Sphero(mac_address=mac_address) as sphero:
         time.sleep(2)
-        #sphero.ble_adapter.close()
-        #sphero.ble_adapter = BluepyAdapter(mac_address=mac_address)
-        #sphero.power.enter_soft_sleep()
-        time.sleep(2)
         sphero.power.wake()
         time.sleep(2)
-        sphero.user_io.set_led_matrix_one_color(color=Color(blue=255))
+        #sphero.user_io.set_led_matrix_single_character(symbol="0", color=Color(255,255,255))
+
+        sphero.user_io.set_led_matrix_text_scrolling(string="00:00", color=Color(255,255,255), repeat=False)
         time.sleep(2)
         sphero.user_io.set_led_matrix_one_color(color=Color())
         time.sleep(2)
