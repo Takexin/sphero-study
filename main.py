@@ -41,6 +41,7 @@ async def onPomodoroPost(request : web.Request):
         currentTime += timedelta(minutes=float(body.get('rest')))
         studyVect.append(currentTime)
     request.app['pomodoro'] = studyVect
+    await asyncio.sleep(0.2)
     request.app['currentStatus'] = 4
 
 
@@ -56,14 +57,14 @@ async def clockMode(app : web.Application):
         if currentStatus == 3:
             print(datetime.now().strftime("%H:%M"))
         elif currentStatus == 4:
-            if len(app['pomodoro']) != app['pomodoroCycle']:
-                print(app['pomodoro'])
-                cycleTime = (app['startTime'] + timedelta(minutes=(app['pomodoro'][app['pomodoroCycle'] - 1]).minute)) 
+            pomodoro = app['pomodoro']
+            pomodoroCycle = app['pomodoroCycle']
+            if len(pomodoro)*2 != pomodoroCycle:
+                cycleTime = pomodoro[pomodoroCycle - 1]
                 remainingStudyTime = cycleTime - datetime.now()
                 print(remainingStudyTime.total_seconds()/60)
                 if remainingStudyTime.total_seconds() <= 0:
                     app['pomodoroCycle'] += 1
-                    #remainingRestTime = 
 
         await asyncio.sleep(0.2)
 
